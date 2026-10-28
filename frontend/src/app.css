@@ -1,0 +1,631 @@
+/*
+ * Inter, the typeface the old Ember panel used (`font-sans: Inter Variable`).
+ *
+ * Self-hosted from the extension's `public/` folder (`public/ember/*.woff2`,
+ * copied to `/ember/` by the panel build) rather than `fonts.gstatic.com`: the
+ * panel sends `Content-Security-Policy: font-src 'self' blob: data:`, so remote
+ * font files are blocked on a real panel and the browser would silently fall
+ * back to Helvetica. The dev server has no CSP, which is why this only showed up
+ * outside dev.
+ */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/ember/inter-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/ember/inter-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+/*
+ * Ember theme styles.
+ *
+ * Brand color: #f38838 (ember.host --primary).
+ *
+ * Applied panel-wide, client and admin alike. `routeScope.ts` still tags
+ * <html data-ember-scope="client|admin">, so any future rule that should stay
+ * client-only can use `[data-ember-scope='client']`.
+ *
+ * The Panel's accent comes from Mantine's `blue` palette (`--mantine-primary-color-*`
+ * derives from `--mantine-color-blue-*`), so remapping that ramp recolors the
+ * checkboxes, switches, radios, tabs, selected rows, progress bars, links and
+ * default buttons in one place.
+ *
+ * The `:not([data-ember-panel-palette])` below never matches; it is only a
+ * specificity bump. The Panel's own palette lives in
+ * `:root[data-mantine-color-scheme=...]` and its stylesheet is loaded after this
+ * one, so without the bump those declarations would win the tie.
+ */
+
+:root:not([data-ember-panel-palette]) {
+  --ember-0: #fff4ec;
+  --ember-1: #ffe6d5;
+  --ember-2: #ffcba6;
+  --ember-3: #ffb075;
+  --ember-4: #f9a05c;
+  --ember-5: #f38838;
+  --ember-6: #e57a26;
+  --ember-7: #cc6514;
+  --ember-8: #b0560c;
+  --ember-9: #8a4106;
+}
+
+/* ---------- dark scheme ---------- */
+
+:root:not([data-ember-panel-palette])[data-mantine-color-scheme='dark'] {
+  --mantine-color-blue-0: var(--ember-0);
+  --mantine-color-blue-1: var(--ember-1);
+  --mantine-color-blue-2: var(--ember-2);
+  --mantine-color-blue-3: var(--ember-3);
+  --mantine-color-blue-4: var(--ember-4);
+  --mantine-color-blue-5: var(--ember-5);
+  --mantine-color-blue-6: var(--ember-6);
+  --mantine-color-blue-7: var(--ember-7);
+  --mantine-color-blue-8: var(--ember-8);
+  --mantine-color-blue-9: var(--ember-9);
+
+  --mantine-color-anchor: var(--ember-4);
+  --mantine-color-blue-filled: var(--ember-5);
+  --mantine-color-blue-filled-hover: var(--ember-6);
+  --mantine-color-blue-light: rgba(243, 136, 56, 0.16);
+  --mantine-color-blue-light-hover: rgba(243, 136, 56, 0.24);
+  --mantine-color-blue-light-color: var(--ember-4);
+  --mantine-color-blue-outline: var(--ember-5);
+  --mantine-color-blue-outline-hover: rgba(243, 136, 56, 0.07);
+  --mantine-color-blue-text: var(--ember-4);
+
+  --mantine-primary-color-contrast: #1b1105;
+}
+
+/* ---------- light scheme ---------- */
+
+:root:not([data-ember-panel-palette])[data-mantine-color-scheme='light'] {
+  --mantine-color-blue-0: var(--ember-0);
+  --mantine-color-blue-1: var(--ember-1);
+  --mantine-color-blue-2: var(--ember-2);
+  --mantine-color-blue-3: var(--ember-3);
+  --mantine-color-blue-4: var(--ember-4);
+  --mantine-color-blue-5: var(--ember-5);
+  --mantine-color-blue-6: var(--ember-6);
+  --mantine-color-blue-7: var(--ember-7);
+  --mantine-color-blue-8: var(--ember-8);
+  --mantine-color-blue-9: var(--ember-9);
+
+  --mantine-color-anchor: #c2570a;
+  --mantine-color-blue-filled: var(--ember-5);
+  --mantine-color-blue-filled-hover: var(--ember-6);
+  --mantine-color-blue-light: rgba(243, 136, 56, 0.15);
+  --mantine-color-blue-light-hover: rgba(243, 136, 56, 0.22);
+  --mantine-color-blue-light-color: #a8500a;
+  --mantine-color-blue-outline: #d96a12;
+  --mantine-color-blue-outline-hover: rgba(243, 136, 56, 0.06);
+  --mantine-color-blue-text: #b0560c;
+
+  --mantine-primary-color-contrast: #1b1105;
+}
+
+/* ---------- typography ---------- */
+
+/*
+ * The old panel ran everything on Inter (`font-sans: Inter Variable`) and used
+ * the same face for headings - its h1 had no `font-header` class. So body and
+ * headings both get Inter here, replacing the panel's Helvetica stack.
+ * Client scope only; admin keeps the stock typography.
+ */
+:root[data-ember-scope='client'] {
+  --font-sans: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mantine-font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mantine-font-family-headings: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+:root[data-ember-scope='client'] body,
+:root[data-ember-scope='client'] h1,
+:root[data-ember-scope='client'] h2,
+:root[data-ember-scope='client'] h3,
+:root[data-ember-scope='client'] h4,
+:root[data-ember-scope='client'] h5,
+:root[data-ember-scope='client'] h6 {
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/*
+ * Rasteriser tweaks for Gecko only. Firefox honours `text-rendering:
+ * optimizeSpeed` (integer glyph advances, no kerning/ligatures) and that is what
+ * makes unhinted 12-14px text crisp there. Chromium *does* honour `font-kerning`
+ * but ignores `optimizeSpeed`, so the same block only throws its spacing off
+ * there - hence the `-moz-appearance` guard, which Chromium never matches.
+ */
+@supports (-moz-appearance: none) {
+  :root[data-ember-scope='client'] body,
+  :root[data-ember-scope='client'] h1,
+  :root[data-ember-scope='client'] h2,
+  :root[data-ember-scope='client'] h3,
+  :root[data-ember-scope='client'] h4,
+  :root[data-ember-scope='client'] h5,
+  :root[data-ember-scope='client'] h6 {
+    font-kerning: none;
+    font-optical-sizing: none;
+    text-rendering: optimizeSpeed;
+  }
+}
+
+/* ---------- sidebar shell (client + admin) ---------- */
+
+/*
+ * The desktop sidebar is a Mantine Card with `my-2 ml-2`, a rounded radius and a
+ * border on all sides, which reads as a floating panel. Flatten it into a docked
+ * column instead: no margin, full viewport height, square corners, and a single
+ * right-hand divider against the content.
+ */
+:root #sidebar-desktop {
+  margin: 0;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  border-radius: 0;
+  border: 0;
+  border-right: 1px solid var(--mantine-color-default-border);
+}
+
+/* ---------- client surfaces ---------- */
+
+/*
+ * Dark scheme: page #121422 (gray-800), cards and inputs #1e202d (gray-700),
+ * rail #0f172a (gray-900), slate text.
+ *
+ * Mantine derives the page background, card/input surfaces, borders, hover
+ * states and dimmed text from its `dark` ramp, so remapping that ramp retints
+ * the whole page in one place - the same trick as the `blue` ramp above.
+ * Structure, order and spacing are untouched.
+ */
+:root[data-ember-scope='client']:not([data-ember-panel-palette])[data-mantine-color-scheme='dark'] {
+  --mantine-color-dark-0: #f8fafc;
+  --mantine-color-dark-1: #e2e8f0;
+  --mantine-color-dark-2: #cbd5e1;
+  --mantine-color-dark-3: #94a3b8;
+  --mantine-color-dark-4: #2b3044;
+  --mantine-color-dark-5: #262a3c;
+  --mantine-color-dark-6: #1e202d;
+  --mantine-color-dark-7: #121422;
+  --mantine-color-dark-8: #0e1019;
+  --mantine-color-dark-9: #0a0c13;
+
+  --mantine-color-body: #121422;
+  --mantine-color-default: #1e202d;
+  --mantine-color-default-hover: #262a3c;
+  --mantine-color-default-border: #2b3044;
+  --mantine-color-default-color: #f8fafc;
+  --mantine-color-text: #f8fafc;
+  --mantine-color-bright: #ffffff;
+  --mantine-color-dimmed: #cbd5e1;
+  --mantine-color-placeholder: #94a3b8;
+  --mantine-color-disabled: #1e202d;
+  --mantine-color-disabled-color: #94a3b8;
+  --mantine-color-disabled-border: #2b3044;
+}
+
+/*
+ * Light scheme: same layering as dark (page darker than the surfaces on top of
+ * it), just inverted - a soft slate page, near-white cards, and grey-100 inputs
+ * so fields read as inset instead of another white panel.
+ */
+:root[data-ember-scope='client']:not([data-ember-panel-palette])[data-mantine-color-scheme='light'] {
+  --mantine-color-body: #e9edf4;
+  --mantine-color-default: #f8fafc;
+  --mantine-color-default-hover: #eef2f8;
+  --mantine-color-default-border: #cfd8e3;
+  --mantine-color-default-color: #0f172a;
+  --mantine-color-text: #0f172a;
+  --mantine-color-bright: #000000;
+  --mantine-color-dimmed: #5b6675;
+  --mantine-color-placeholder: #8b98a8;
+  --mantine-color-disabled: #e3e8f0;
+  --mantine-color-disabled-color: #8b98a8;
+  --mantine-color-disabled-border: #cfd8e3;
+}
+
+/*
+ * The light scheme paints these two explicitly white, so they get direct
+ * values: cards slightly off-white, inputs a step darker than the card.
+ */
+:root[data-ember-scope='client']:not([data-ember-panel-palette])[data-mantine-color-scheme='light']
+  .mantine-Card-root {
+  border-color: #dbe3ec;
+  background-color: #f8fafc;
+  color: #0f172a;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+:root[data-ember-scope='client']:not([data-ember-panel-palette])[data-mantine-color-scheme='light']
+  .mantine-Input-input {
+  border-color: #cfd8e3;
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+/*
+ * The rail stays dark in both schemes and must look byte-identical to dark
+ * mode, so it re-declares the dark-scheme palette locally. That covers the
+ * components that switch their variant per scheme (green/red power buttons,
+ * gray menus, blue accents) as well as the surfaces.
+ */
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) {
+  --mantine-color-dark-0: #f8fafc;
+  --mantine-color-dark-1: #e2e8f0;
+  --mantine-color-dark-2: #cbd5e1;
+  --mantine-color-dark-3: #94a3b8;
+  --mantine-color-dark-4: #2b3044;
+  --mantine-color-dark-5: #262a3c;
+  --mantine-color-dark-6: #1e202d;
+  --mantine-color-dark-7: #121422;
+  --mantine-color-dark-8: #0e1019;
+  --mantine-color-dark-9: #0a0c13;
+
+  --mantine-color-body: #121422;
+  --mantine-color-default: #1e202d;
+  --mantine-color-default-hover: #262a3c;
+  --mantine-color-default-border: #2b3044;
+  --mantine-color-default-color: #f8fafc;
+  --mantine-color-text: #f8fafc;
+  --mantine-color-bright: #ffffff;
+  --mantine-color-dimmed: #cbd5e1;
+  --mantine-color-placeholder: #94a3b8;
+  --mantine-color-disabled: #1e202d;
+  --mantine-color-disabled-color: #94a3b8;
+  --mantine-color-disabled-border: #2b3044;
+
+  --mantine-color-anchor: var(--ember-4);
+  --mantine-color-blue-filled: var(--ember-5);
+  --mantine-color-blue-filled-hover: var(--ember-6);
+  --mantine-color-blue-light: rgba(243, 136, 56, 0.16);
+  --mantine-color-blue-light-hover: rgba(243, 136, 56, 0.24);
+  --mantine-color-blue-light-color: var(--ember-4);
+  --mantine-color-blue-outline: var(--ember-5);
+  --mantine-color-blue-outline-hover: rgba(243, 136, 56, 0.07);
+  --mantine-color-blue-text: var(--ember-4);
+
+  --mantine-color-gray-filled: var(--mantine-color-gray-8);
+  --mantine-color-gray-filled-hover: var(--mantine-color-gray-9);
+  --mantine-color-gray-light: rgba(134, 142, 150, 0.15);
+  --mantine-color-gray-light-color: var(--mantine-color-gray-3);
+  --mantine-color-gray-light-hover: rgba(134, 142, 150, 0.2);
+  --mantine-color-gray-outline: var(--mantine-color-gray-4);
+  --mantine-color-gray-outline-hover: rgba(206, 212, 218, 0.05);
+  --mantine-color-gray-text: var(--mantine-color-gray-4);
+
+  --mantine-color-green-filled: var(--mantine-color-green-8);
+  --mantine-color-green-filled-hover: var(--mantine-color-green-9);
+  --mantine-color-green-light: rgba(64, 192, 87, 0.15);
+  --mantine-color-green-light-color: var(--mantine-color-green-3);
+  --mantine-color-green-outline: var(--mantine-color-green-4);
+  --mantine-color-green-text: var(--mantine-color-green-4);
+
+  --mantine-color-red-filled: var(--mantine-color-red-8);
+  --mantine-color-red-filled-hover: var(--mantine-color-red-9);
+  --mantine-color-red-light: rgba(250, 82, 82, 0.15);
+  --mantine-color-red-light-color: var(--mantine-color-red-3);
+  --mantine-color-red-outline: var(--mantine-color-red-4);
+  --mantine-color-red-text: var(--mantine-color-red-4);
+
+  --mantine-color-yellow-filled: var(--mantine-color-yellow-8);
+  --mantine-color-yellow-filled-hover: var(--mantine-color-yellow-9);
+  --mantine-color-yellow-text: var(--mantine-color-yellow-4);
+
+  --mantine-color-orange-filled: var(--mantine-color-orange-8);
+  --mantine-color-orange-filled-hover: var(--mantine-color-orange-9);
+  --mantine-color-orange-text: var(--mantine-color-orange-4);
+
+  --mantine-color-teal-filled: var(--mantine-color-teal-8);
+  --mantine-color-teal-filled-hover: var(--mantine-color-teal-9);
+  --mantine-color-teal-text: var(--mantine-color-teal-4);
+
+  --mantine-primary-color-contrast: #1b1105;
+}
+
+/* Light scheme still paints those rail cards/inputs white; darken them. */
+:root[data-ember-scope='client'][data-mantine-color-scheme='light']
+  :is(#sidebar-desktop, .mantine-Drawer-content)
+  .mantine-Card-root,
+:root[data-ember-scope='client'][data-mantine-color-scheme='light']
+  :is(#sidebar-desktop, .mantine-Drawer-content)
+  .mantine-Input-input {
+  background-color: #1e202d;
+  border-color: #2b3044;
+  color: #f8fafc;
+  box-shadow: none;
+}
+
+/* ---------- power buttons ---------- */
+
+/*
+ * Matched to the old Ember panel's `_button_cn9dz_1` / `_primary_` / `_danger_`
+ * / `_text_` module: 14px at weight 600, 1.25 line-height, 4px radius, 8px/16px
+ * padding. Colours come from that panel's palette: primary #f08637 with blue-50
+ * text, danger #dc2626, and a flat gray-700 "text" button for restart.
+ *
+ * The panel passes colours inline, so the custom properties need `!important`.
+ */
+:root[data-ember-scope='client'] #console-infobar button[data-variant='filled'],
+:root[data-ember-scope='client']
+  :is(#sidebar-desktop, .mantine-Drawer-content)
+  button[data-variant='filled'] {
+  --button-fz: 0.875rem;
+
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  line-height: 1.25rem;
+}
+
+/* Slightly wider tracking on the three power labels only. */
+:root[data-ember-scope='client'] #console-infobar button[style*='green-filled'],
+:root[data-ember-scope='client'] #console-infobar button[style*='red-filled'],
+:root[data-ember-scope='client'] #console-infobar button[style*='gray-filled'] {
+  height: 2.5rem;
+  letter-spacing: 0.1em;
+}
+
+:root[data-ember-scope='client'] button[style*='green-filled'] {
+  --button-bg: #f38838 !important;
+  --button-hover: #e57a26 !important;
+  --button-color: #eff6ff !important;
+}
+
+:root[data-ember-scope='client'] #console-infobar button[style*='red-filled'] {
+  --button-bg: #dc2626 !important;
+  --button-hover: #b91c1c !important;
+  --button-color: #f8fafc !important;
+}
+
+:root[data-ember-scope='client'] #console-infobar button[style*='gray-filled'] {
+  --button-bg: #1e202d !important;
+  --button-hover: #262a3c !important;
+  --button-color: #f8fafc !important;
+}
+
+/*
+ * Same button once the server is already running. Mantine's disabled state
+ * paints a flat `background: var(--mantine-color-disabled)` (its neutral grey),
+ * which is why only the enabled button turned orange - the custom property is
+ * ignored there. Override the background itself.
+ */
+:root[data-ember-scope='client']
+  button[style*='green-filled']:is(:disabled, [data-disabled='true']) {
+  background: rgba(243, 136, 56, 0.6) !important;
+  color: var(--mantine-color-dimmed) !important;
+  border-color: var(--mantine-color-default-border);
+}
+
+/* Same treatment for "stop": a drained red rather than the neutral grey. */
+:root[data-ember-scope='client']
+  button[style*='red-filled']:is(:disabled, [data-disabled='true']) {
+  background: rgba(224, 49, 49, 0.6) !important;
+  color: var(--mantine-color-dimmed) !important;
+  border-color: var(--mantine-color-default-border);
+}
+
+/*
+ * The three power buttons size to their own labels (`min-w-fit`), so "Restart"
+ * ends up wider than "Start"/"Stop". Give all three the same floor on desktop -
+ * wide enough for the longest label - so they line up as equal segments. Mobile
+ * keeps the shrink-to-fit behaviour, where space is tight.
+ */
+@media (min-width: 48em) {
+  :root[data-ember-scope='client'] #console-infobar button[style*='green-filled'],
+  :root[data-ember-scope='client'] #console-infobar button[style*='gray-filled'],
+  :root[data-ember-scope='client'] #console-infobar button[style*='red-filled'] {
+    min-width: 6.25rem;
+    flex: 1 1 6.25rem;
+  }
+
+  /* Old panel used `grid-cols-3 gap-1` - 4px between the segments. */
+  :root[data-ember-scope='client']
+    #console-infobar
+    div:has(> button[style*='green-filled']) {
+    gap: 0.25rem;
+  }
+}
+
+/* ---------- charts ---------- */
+
+/*
+ * "Limit above the visible range" badge. When the limit is higher than the
+ * chart's ceiling, the component renders the arrow badge at `top-0` of the
+ * plot, which top-aligns it against the top gridline and leaves it visibly
+ * *inside* the chart compared to the centred y-axis tick labels.
+ *
+ * Lift it by half a line into the card's top padding so it sits just above the
+ * plot and lines up with the tick on the left. This only matches the arrow
+ * badge (a bare `span.absolute.top-0` in the plot); the normal `Limit x`
+ * caption lives inside the dashed-line wrapper and keeps its position.
+ */
+:root[data-ember-scope='client']
+  .mantine-Card-root
+  div.relative.min-w-0.flex-1
+  > span.absolute.top-0 {
+  top: -0.75rem;
+}
+
+/*
+ * Single-series charts (CPU load, memory load, disk…) draw with
+ * `--chart-series-1`. Multi-series charts - the network outbound/inbound graph,
+ * tunnel directions - use series 1 *and* 2, and are the ones that render a
+ * legend (toggle buttons carry `aria-pressed`).
+ *
+ * So the override is attached to chart cards that have no legend: CPU and
+ * memory turn orange, the network graph keeps its stock colours.
+ */
+:root:not([data-ember-panel-palette])[data-mantine-color-scheme='dark']
+  .mantine-Card-root:not(:has([aria-pressed])) {
+  --chart-series-1: #f38838;
+}
+
+:root:not([data-ember-panel-palette])[data-mantine-color-scheme='light']
+  .mantine-Card-root:not(:has([aria-pressed])) {
+  --chart-series-1: #d96a12;
+}
+
+/* ---------- client sidebar ---------- */
+
+/*
+ * Modelled on the old Ember panel sidebar: a docked slate rail (gray-900),
+ * flat full-width rows with a 24px icon and Inter text, no pill backgrounds,
+ * and the single orange dot marking the selected entry.
+ *
+ * Client pages only: the admin sidebar keeps the stock look (orange palette aside).
+ */
+:root[data-ember-scope='client'] {
+  --ember-sidebar-bg: #0f172a;
+  --ember-sidebar-bg-hover: #121422;
+  --ember-sidebar-border: #1e202d;
+  --ember-sidebar-text: #cbd5e1;
+  --ember-sidebar-text-hover: #f1f5f9;
+  --ember-sidebar-text-active: #ffffff;
+  --ember-sidebar-gutter: 12px;
+}
+
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) {
+  background-color: var(--ember-sidebar-bg);
+  border-right: 1px solid var(--ember-sidebar-border);
+}
+
+/* Flat nav rows spanning the whole width of the rail. */
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a > .mantine-Button-root {
+  --button-color: var(--ember-sidebar-text);
+  --button-hover-color: var(--ember-sidebar-text-hover);
+  --button-fz: 1rem;
+  --button-justify: flex-start;
+
+  height: 2.5rem;
+  padding-inline: 1rem;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  color: var(--ember-sidebar-text);
+  font-family: Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+
+  transition:
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a > .mantine-Button-root:hover {
+  background-color: var(--ember-sidebar-bg-hover);
+  color: var(--ember-sidebar-text-hover);
+}
+
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a > .mantine-Button-root .mantine-Button-label,
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a > .mantine-Button-root .mantine-Button-section {
+  color: inherit;
+
+  transition:
+    color 160ms ease,
+    padding-inline-start 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Selected entry: bright, bold, shifted right, orange dot in the gutter. */
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a:has(> .mantine-Button-root) {
+  position: relative;
+}
+
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a > .mantine-Button-root.active {
+  border: 0;
+  background-color: transparent;
+}
+
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a > .mantine-Button-root.active,
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a > .mantine-Button-root.active
+  .mantine-Button-label {
+  color: var(--ember-sidebar-text-active);
+  font-weight: 700;
+}
+
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a > .mantine-Button-root.active
+  .mantine-Button-label {
+  padding-inline-start: var(--ember-sidebar-gutter);
+}
+
+/* Group dividers / labels. */
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content .mantine-Divider-root {
+  border-color: var(--ember-sidebar-border);
+}
+
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content .mantine-Divider-label {
+  color: #94a3b8;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Account card at the foot of the rail. */
+:root[data-ember-scope='client'] #sidebar-account-card {
+  border-color: var(--ember-sidebar-border);
+  border-radius: 0.75rem;
+  background-color: var(--ember-sidebar-bg-hover);
+  color: var(--ember-sidebar-text);
+}
+
+/* Mobile drawer close button: ember orange against the dark rail. */
+:root[data-ember-scope='client'] .mantine-Drawer-content .mantine-CloseButton-root {
+  color: #f38838;
+}
+
+:root[data-ember-scope='client'] .mantine-Drawer-content .mantine-CloseButton-root:hover {
+  background-color: rgba(243, 136, 56, 0.14);
+  color: #ffa659;
+}
+
+/*
+ * The dot lives on the <a>, not the button: Mantine's button root is
+ * `overflow: hidden`, which would clip anything painted in the gutter. It is an
+ * ::after so it paints on top of the button's own hover/active background.
+ *
+ * It exists on every entry (transparent, slightly shrunk) and only animates in
+ * on the selected one, so moving between tabs fades the dot instead of popping.
+ */
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a:has(> .mantine-Button-root)::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  z-index: 1;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #f38838;
+  opacity: 0;
+  transform: translateY(-50%) scale(0.4);
+  transition:
+    opacity 180ms ease,
+    transform 180ms cubic-bezier(0.2, 0, 0, 1);
+  pointer-events: none;
+}
+
+:root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a:has(> .mantine-Button-root.active)::after {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a > .mantine-Button-root,
+  :root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a > .mantine-Button-root .mantine-Button-label,
+  :root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content a:has(> .mantine-Button-root)::after {
+    transition: none;
+  }
+}

@@ -1,0 +1,14 @@
+# Build output
+target/
+dist/
+
+# Dependencies
+node_modules/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Packaged extensions
+*.c7s.zip

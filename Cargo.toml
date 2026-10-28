@@ -1,0 +1,11 @@
+[package]
+name = "dev_andyishereboi_ember"
+description = "Ember - a user-side theme for the Calagopus Panel."
+authors = ["andyishereboi"]
+version = "1.0.4"
+edition = { workspace = true }
+
+[dependencies]
+shared = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
