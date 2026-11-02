@@ -6,6 +6,21 @@ area can be excluded. No backend routes, no database migrations.
 
 ---
 
+## 1.0.5
+
+### Sidebar scrollbar
+
+- The sidebar nav now has a **persistent, themed scrollbar**. Firefox (and
+  Chromium with overlay scrollbars enabled) fades the native bar out after a
+  moment of inactivity, and no CSS or HTTP header can prevent that - it is an
+  OS-level rendering behaviour. So the native bar is hidden and one is painted
+  by the extension (`frontend/src/sidebarScrollbar.ts`): 7px pill thumb in the
+  rail's slate, draggable, click-the-track to page, driven by scroll/resize/
+  content observers.
+- Identical behaviour in Firefox, Edge, Chrome and Safari, with no per-user
+  setting required.
+- Client scope only; the admin sidebar keeps the stock scrollbar.
+
 ## 1.0.4
 
 ### Power buttons (console + sidebar)

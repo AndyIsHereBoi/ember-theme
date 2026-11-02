@@ -560,6 +560,62 @@
   padding-inline-start: var(--ember-sidebar-gutter);
 }
 
+/*
+ * Scroll area inside the rail.
+ *
+ * The native bar is hidden (Firefox and overlay-scrollbar Chromium fade it out
+ * after inactivity and no CSS/HTTP can prevent that) and `sidebarScrollbar.ts`
+ * paints a themed one that stays visible. Scrolling is unaffected.
+ */
+:root[data-ember-scope='client']
+  :is(#sidebar-desktop, .mantine-Drawer-content)
+  #sidebar-content
+  > div.overflow-y-auto {
+  scrollbar-width: none;
+}
+
+:root[data-ember-scope='client']
+  :is(#sidebar-desktop, .mantine-Drawer-content)
+  #sidebar-content
+  > div.overflow-y-auto::-webkit-scrollbar {
+  display: none;
+}
+
+:root[data-ember-scope='client'] #sidebar-content .ember-scroll-host {
+  position: relative;
+}
+
+:root[data-ember-scope='client'] #sidebar-content .ember-scroll-track {
+  position: absolute;
+  z-index: 2;
+  right: 2px;
+  width: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms ease;
+}
+
+:root[data-ember-scope='client'] #sidebar-content .ember-scroll-track-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+:root[data-ember-scope='client'] #sidebar-content .ember-scroll-thumb {
+  position: absolute;
+  inset-inline: 1px;
+  top: 0;
+  border-radius: 999px;
+  background: #3a4058;
+  transition: background-color 120ms ease;
+}
+
+:root[data-ember-scope='client'] #sidebar-content .ember-scroll-thumb:hover,
+:root[data-ember-scope='client'] #sidebar-content .ember-scroll-thumb:active {
+  background: #4a5170;
+}
+
 /* Group dividers / labels. */
 :root[data-ember-scope='client'] :is(#sidebar-desktop, .mantine-Drawer-content) #sidebar-content .mantine-Divider-root {
   border-color: var(--ember-sidebar-border);
